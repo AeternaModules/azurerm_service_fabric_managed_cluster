@@ -70,10 +70,10 @@ EOT
     dns_name               = optional(string)
     dns_service_enabled    = optional(bool)
     password               = optional(string)
-    sku                    = optional(string, "Basic")
+    sku                    = optional(string) # Default: "Basic"
     subnet_id              = optional(string)
     tags                   = optional(map(string))
-    upgrade_wave           = optional(string, "Wave0")
+    upgrade_wave           = optional(string) # Default: "Wave0"
     username               = optional(string)
     lb_rule = object({
       backend_port       = number
@@ -103,7 +103,7 @@ EOT
       application_port_range            = string
       capacities                        = optional(map(string))
       data_disk_size_gb                 = number
-      data_disk_type                    = optional(string, "Standard_LRS")
+      data_disk_type                    = optional(string) # Default: "Standard_LRS"
       ephemeral_port_range              = string
       multiple_placement_groups_enabled = optional(bool)
       name                              = string
