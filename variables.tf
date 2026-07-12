@@ -18,6 +18,8 @@ Optional:
     - dns_name
     - dns_service_enabled
     - password
+    - password_key_vault_id (alternative to password - read from Key Vault instead)
+    - password_key_vault_secret_name (alternative to password - read from Key Vault instead)
     - sku
     - subnet_id
     - tags
@@ -61,20 +63,22 @@ Optional:
 EOT
 
   type = map(object({
-    client_connection_port = number
-    http_gateway_port      = number
-    location               = string
-    name                   = string
-    resource_group_name    = string
-    backup_service_enabled = optional(bool)
-    dns_name               = optional(string)
-    dns_service_enabled    = optional(bool)
-    password               = optional(string)
-    sku                    = optional(string) # Default: "Basic"
-    subnet_id              = optional(string)
-    tags                   = optional(map(string))
-    upgrade_wave           = optional(string) # Default: "Wave0"
-    username               = optional(string)
+    client_connection_port         = number
+    http_gateway_port              = number
+    location                       = string
+    name                           = string
+    resource_group_name            = string
+    backup_service_enabled         = optional(bool)
+    dns_name                       = optional(string)
+    dns_service_enabled            = optional(bool)
+    password                       = optional(string)
+    password_key_vault_id          = optional(string)
+    password_key_vault_secret_name = optional(string)
+    sku                            = optional(string) # Default: "Basic"
+    subnet_id                      = optional(string)
+    tags                           = optional(map(string))
+    upgrade_wave                   = optional(string) # Default: "Wave0"
+    username                       = optional(string)
     lb_rule = list(object({
       backend_port       = number
       frontend_port      = number
