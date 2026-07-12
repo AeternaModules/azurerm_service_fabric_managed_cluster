@@ -75,31 +75,31 @@ EOT
     tags                   = optional(map(string))
     upgrade_wave           = optional(string) # Default: "Wave0"
     username               = optional(string)
-    lb_rule = object({
+    lb_rule = list(object({
       backend_port       = number
       frontend_port      = number
       probe_protocol     = string
       probe_request_path = optional(string)
       protocol           = string
-    })
+    }))
     authentication = optional(object({
       active_directory = optional(object({
         client_application_id  = string
         cluster_application_id = string
         tenant_id              = string
       }))
-      certificate = optional(object({
+      certificate = optional(list(object({
         common_name = optional(string)
         thumbprint  = string
         type        = string
-      }))
+      })))
     }))
-    custom_fabric_setting = optional(object({
+    custom_fabric_setting = optional(list(object({
       parameter = string
       section   = string
       value     = string
-    }))
-    node_type = optional(object({
+    })))
+    node_type = optional(list(object({
       application_port_range            = string
       capacities                        = optional(map(string))
       data_disk_size_gb                 = number
@@ -115,15 +115,15 @@ EOT
       vm_image_sku                      = string
       vm_image_version                  = string
       vm_instance_count                 = number
-      vm_secrets = optional(object({
-        certificates = object({
+      vm_secrets = optional(list(object({
+        certificates = list(object({
           store = string
           url   = string
-        })
+        }))
         vault_id = string
-      }))
+      })))
       vm_size = string
-    }))
+    })))
   }))
 }
 

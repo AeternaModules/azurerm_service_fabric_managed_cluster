@@ -16,12 +16,15 @@ resource "azurerm_service_fabric_managed_cluster" "service_fabric_managed_cluste
   upgrade_wave           = each.value.upgrade_wave
   username               = each.value.username
 
-  lb_rule {
-    backend_port       = each.value.lb_rule.backend_port
-    frontend_port      = each.value.lb_rule.frontend_port
-    probe_protocol     = each.value.lb_rule.probe_protocol
-    probe_request_path = each.value.lb_rule.probe_request_path
-    protocol           = each.value.lb_rule.protocol
+  dynamic "lb_rule" {
+    for_each = each.value.lb_rule
+    content {
+      backend_port       = lb_rule.value.backend_port
+      frontend_port      = lb_rule.value.frontend_port
+      probe_protocol     = lb_rule.value.probe_protocol
+      probe_request_path = lb_rule.value.probe_request_path
+      protocol           = lb_rule.value.protocol
+    }
   }
 
   dynamic "authentication" {
@@ -36,7 +39,7 @@ resource "azurerm_service_fabric_managed_cluster" "service_fabric_managed_cluste
         }
       }
       dynamic "certificate" {
-        for_each = authentication.value.certificate != null ? [authentication.value.certificate] : []
+        for_each = authentication.value.certificate != null ? authentication.value.certificate : []
         content {
           common_name = certificate.value.common_name
           thumbprint  = certificate.value.thumbprint
@@ -47,7 +50,7 @@ resource "azurerm_service_fabric_managed_cluster" "service_fabric_managed_cluste
   }
 
   dynamic "custom_fabric_setting" {
-    for_each = each.value.custom_fabric_setting != null ? [each.value.custom_fabric_setting] : []
+    for_each = each.value.custom_fabric_setting != null ? each.value.custom_fabric_setting : []
     content {
       parameter = custom_fabric_setting.value.parameter
       section   = custom_fabric_setting.value.section
@@ -56,7 +59,7 @@ resource "azurerm_service_fabric_managed_cluster" "service_fabric_managed_cluste
   }
 
   dynamic "node_type" {
-    for_each = each.value.node_type != null ? [each.value.node_type] : []
+    for_each = each.value.node_type != null ? each.value.node_type : []
     content {
       application_port_range            = node_type.value.application_port_range
       capacities                        = node_type.value.capacities
@@ -74,11 +77,14 @@ resource "azurerm_service_fabric_managed_cluster" "service_fabric_managed_cluste
       vm_image_version                  = node_type.value.vm_image_version
       vm_instance_count                 = node_type.value.vm_instance_count
       dynamic "vm_secrets" {
-        for_each = node_type.value.vm_secrets != null ? [node_type.value.vm_secrets] : []
+        for_each = node_type.value.vm_secrets != null ? node_type.value.vm_secrets : []
         content {
-          certificates {
-            store = vm_secrets.value.certificates.store
-            url   = vm_secrets.value.certificates.url
+          dynamic "certificates" {
+            for_each = vm_secrets.value.certificates
+            content {
+              store = certificates.value.store
+              url   = certificates.value.url
+            }
           }
           vault_id = vm_secrets.value.vault_id
         }
