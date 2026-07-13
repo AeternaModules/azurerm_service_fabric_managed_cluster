@@ -74,10 +74,10 @@ EOT
     password                       = optional(string)
     password_key_vault_id          = optional(string)
     password_key_vault_secret_name = optional(string)
-    sku                            = optional(string) # Default: "Basic"
+    sku                            = optional(string)
     subnet_id                      = optional(string)
     tags                           = optional(map(string))
-    upgrade_wave                   = optional(string) # Default: "Wave0"
+    upgrade_wave                   = optional(string)
     username                       = optional(string)
     lb_rule = list(object({
       backend_port       = number
@@ -107,7 +107,7 @@ EOT
       application_port_range            = string
       capacities                        = optional(map(string))
       data_disk_size_gb                 = number
-      data_disk_type                    = optional(string) # Default: "Standard_LRS"
+      data_disk_type                    = optional(string)
       ephemeral_port_range              = string
       multiple_placement_groups_enabled = optional(bool)
       name                              = string
@@ -129,5 +129,21 @@ EOT
       vm_size = string
     })))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.service_fabric_managed_clusters : (
+        length(v.lb_rule) >= 1
+      )
+    ])
+    error_message = "Each lb_rule list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.service_fabric_managed_clusters : (
+        v.node_type == null || alltrue([for item in v.node_type : (item.vm_secrets == null || alltrue([for item in item.vm_secrets : (length(item.certificates) >= 1)]))])
+      )
+    ])
+    error_message = "Each certificates list must contain at least 1 items"
+  }
 }
 
